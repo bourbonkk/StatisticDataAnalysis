@@ -1,4 +1,3 @@
-
 # 기존 데이터  - 2020년 1월~6월까지 6개월간의 관측된 데이터를 활용
 
 # 2020 설 연휴 기간(1월 24일 부터 27일)
@@ -28,5 +27,82 @@
 
 # 516일 데이터 수집
 
+import dataframe_image as dfi
+import pandas as pd
+
+
+def descriptive_statistics():
+    hangul_mapper = {
+        "sm_tp1_t": "1종교통량(합계)",
+        "sm_tp2_t": "2종교통량(합계)",
+        "sm_tp3_t": "3종교통량(합계)",
+        "sm_tp4_t": "4종교통량(합계)",
+        "sm_tp5_t": "5종교통량(합계)",
+        "sm_tp6_t": "6종교통량(합계)",
+        "sm_tot_t": "교통량(합계)",
+        "confirmed": "누적확진자",
+        "death": "누적사망자",
+        "released": "누적격리해제",
+        "tested": "누적검사자",
+        "negative": "누적음성",
+        "critical": "누적위중증",
+        "i_quarant": "현재격리자수",
+        "i_under_test": "현재검사자수",
+        "i_nw_confirm": "신규확진자수",
+        "i_nw_quarant": "신규격리자수",
+        "i_nw_release": "신규격리해제자수",
+        "i_nw_test": "신규검사자수",
+        "i_nw_death": "신규사망자수",
+        "i_confirm_id_rto": "확진자증감률",
+        "i_quarant_id_rto": "현재격리자증감률",
+        "i_test_id_rto": "누적검사증감률",
+        "i_test_cnfm_rto": "검사자확진율",
+        "i_confirm_rto": "확진율",
+        "i_fatality_rto": "치명률",
+        "i_release_rto": "격리해제율",
+    }
+    data = pd.read_csv('./rawdata/totally_raw_data_delete_expression.csv')
+    statistic_data = []
+    col = ["한글 변수명", "영문 변수명", "N", "평균", "표준편차", "최솟값", "최댓값"]
+    for key in data.keys():
+        if key == 'date':
+            continue
+        statistic_data.append([
+            hangul_mapper.get(key),
+            key,
+            data[key].__len__(),
+            round(data[key].mean(), 2),
+            round(data[key].std(), 2),
+            round(data[key].min(), 2),
+            round(data[key].max(), 2)])
+
+    df = pd.DataFrame(statistic_data, columns=col)
+    dfi.export(df, 'image/statistic_view.png')
+
+
+def show_acf():
+    # https://direction-f.tistory.com/65
+    pass
+
+
+def show_pacf():
+    pass
+
+
+def calc_vif():
+    # https://mindscale.kr/course/basic-stat-python/13/
+    pass
+
+
+def calc_correlation():
+    # https://mindscale.kr/course/basic-stat-python/6/
+    pass
+
+
+def regression_analysis():
+    pass
+
+
 if __name__ == '__main__':
-    print("")
+    descriptive_statistics()
+    # pass
