@@ -11,7 +11,8 @@
 ### 논문 URL : http://lps3.www.dbpia.co.kr.libproxy.sogang.ac.kr/pdf/pdfView.do?nodeId=NODE10485870  
 ### 데이터 출처 :     
 #### 1) 교통량: http://data.ex.co.kr  
-#### 2) 코로나-19 현황 : 보건복지부  
+#### 2) 코로나-19 현황 : https://github.com/jooeungen/coronaboard_kr  
+
 ### 데이터 수집 기간 :    
 #### 1) 교통량 : 20200101 ~ 20210531  
 #### 2) 코로나-19 현황 : 20200101 ~ 20210518  
