@@ -17,19 +17,10 @@
 #### 2) 코로나-19 현황 : 20200101 ~ 20210518  
 
 ### 데이터 인덱스
-#### 1) Covid19GenAgeCaseInf  
-![img.png](image/Covid19GenAgeCaseInf_index.png)
+#### 1) traffic  
+![img.png](image/img.png)  
 
-#### 2) Covid19InfState  
-![img.png](image/Covid19InfState_index.png)
-
-#### 3) Covid19NatInfState  
-![img.png](image/Covid19NatInfState.png)
-
-#### 4) Covid19SidoInfState  
-![img.png](image/Covid19SidoInfState.png)
-
-#### 5) traffic  
+#### 2) traffic  
 |집계일자|영업소코드|영업소명|입출구구분코드|입출구명|TCS하이패스구분코드|TCS하이패스명  
 |고속도로운영기관구분코드|고속도로운영기관명|영업형태구분코드|영업형태명  
 |1종교통량|2종교통량|3종교통량|4종교통량|5종교통량|6종교통량|총교통량|
