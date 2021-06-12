@@ -29,8 +29,9 @@
 
 import dataframe_image as dfi
 import pandas as pd
-import statsmodels.graphics.tsaplots as sgt
-from matplotlib import pyplot as plt
+import statsmodels.api as sm
+from patsy.highlevel import dmatrices
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
 def descriptive_statistics():
@@ -81,14 +82,38 @@ def descriptive_statistics():
             round(data[key].max(), 2)])
 
     statistic_df = pd.DataFrame(statistic_data, columns=col)
+
     # 주석 해제 시 이미지 생성
-    dfi.export(statistic_df, 'image/statistic_view.png')
+    dfi.export(statistic_df, 'image/8_statistic_view.png')
     return data
 
 
-def calc_vif():
-    # https://mindscale.kr/course/basic-stat-python/13/
-    pass
+def check_vif(data):
+    # https://nonmeyet.tistory.com/entry/Python-Pvalue-VIF-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0-Linear-regression
+    features = "i_critical+" \
+               "i_quarant+" \
+               "i_under_test+" \
+               "i_nw_confirm+" \
+               "i_nw_quarant+" \
+               "i_nw_release+" \
+               "i_nw_test+" \
+               "i_nw_death+" \
+               "i_confirm_id_rto+" \
+               "i_quarant_id_rto+" \
+               "i_test_id_rto+" \
+               "i_test_cnfm_rto+" \
+               "i_confirm_rto+" \
+               "i_fatality_rto+" \
+               "i_release_rto+" \
+               "i_critical_rto"
+    y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
+
+    # 보통 10이 넘으면 문제가 있다고 판단
+    vif = pd.DataFrame()
+    vif["VIF Factor"] = [variance_inflation_factor(x.values, i) for i in range(x.shape[1])]
+    vif["features"] = x.columns
+    print(vif.round(1).info)
+    dfi.export(vif.round(1), 'image/7_check_VIF.png')
 
 
 def calc_correlation():
@@ -96,9 +121,30 @@ def calc_correlation():
     pass
 
 
-def regression_analysis():
-    pass
+def regression_analysis(data):
+    features = "i_critical+" \
+               "i_quarant+" \
+               "i_under_test+" \
+               "i_nw_confirm+" \
+               "i_nw_quarant+" \
+               "i_nw_release+" \
+               "i_nw_test+" \
+               "i_nw_death+" \
+               "i_confirm_id_rto+" \
+               "i_quarant_id_rto+" \
+               "i_test_id_rto+" \
+               "i_test_cnfm_rto+" \
+               "i_confirm_rto+" \
+               "i_fatality_rto+" \
+               "i_release_rto+" \
+               "i_critical_rto"
+    y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
+
+    result = sm.OLS(y, x).fit()
+    print(result.summary())
 
 
 if __name__ == '__main__':
     data = descriptive_statistics()
+    regression_analysis(data)
+    check_vif(data)

@@ -29,3 +29,15 @@
 
 ### 기술통계 출력
 ![img.png](image/statistic_view.png)  
+
+### 시각화 차트
+![img.png](image/1_교통량의시계열추이.png)  
+![img.png](image/2_요일별교통량.png)  
+![img.png](image/3_ACF_PACF.png)  
+![img.png](image/4_1종교통량.png)  
+![img.png](image/4_2종교통량.png)  
+![img.png](image/4_3종교통량.png)   
+![img.png](image/4_4종교통량.png)
+![img.png](image/4_5종교통량.png)  
+![img.png](image/4_6종교통량.png)  
+![img.png](image/6_시기별COVID-19신규확진자추이.png)  
