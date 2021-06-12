@@ -29,6 +29,8 @@
 
 import dataframe_image as dfi
 import pandas as pd
+import statsmodels.graphics.tsaplots as sgt
+from matplotlib import pyplot as plt
 
 
 def descriptive_statistics():
@@ -60,6 +62,8 @@ def descriptive_statistics():
         "i_confirm_rto": "확진율",
         "i_fatality_rto": "치명률",
         "i_release_rto": "격리해제율",
+        "i_critical_rto": "위중증증감률",
+        "i_critical": "위중증환자수"
     }
     data = pd.read_csv('./rawdata/totally_raw_data_delete_expression.csv')
     statistic_data = []
@@ -76,17 +80,10 @@ def descriptive_statistics():
             round(data[key].min(), 2),
             round(data[key].max(), 2)])
 
-    df = pd.DataFrame(statistic_data, columns=col)
-    dfi.export(df, 'image/statistic_view.png')
-
-
-def show_acf():
-    # https://direction-f.tistory.com/65
-    pass
-
-
-def show_pacf():
-    pass
+    statistic_df = pd.DataFrame(statistic_data, columns=col)
+    # 주석 해제 시 이미지 생성
+    dfi.export(statistic_df, 'image/statistic_view.png')
+    return data
 
 
 def calc_vif():
@@ -104,5 +101,4 @@ def regression_analysis():
 
 
 if __name__ == '__main__':
-    descriptive_statistics()
-    # pass
+    data = descriptive_statistics()
