@@ -30,10 +30,14 @@
 import dataframe_image as dfi
 import pandas as pd
 import statsmodels.api as sm
+from matplotlib import pyplot as plt
 from patsy.highlevel import dmatrices
+from statsmodels.sandbox.regression.predstd import wls_prediction_std
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+import seaborn as sns
 
 
+# 기술통계 데이터
 def descriptive_statistics():
     hangul_mapper = {
         "sm_tp1_t": "1종교통량(합계)",
@@ -88,6 +92,7 @@ def descriptive_statistics():
     return data
 
 
+# 다중공산성 확인을 위한 VIF
 def check_vif(data):
     # https://nonmeyet.tistory.com/entry/Python-Pvalue-VIF-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0-Linear-regression
     features = "i_critical+" \
@@ -112,13 +117,22 @@ def check_vif(data):
     vif = pd.DataFrame()
     vif["VIF Factor"] = [variance_inflation_factor(x.values, i) for i in range(x.shape[1])]
     vif["features"] = x.columns
-    print(vif.round(1).info)
     dfi.export(vif.round(1), 'image/7_check_VIF.png')
 
 
-def calc_correlation():
+# 상관계수 히트맵
+def calc_correlation(data):
     # https://mindscale.kr/course/basic-stat-python/6/
-    pass
+    drop_unnecessary_data = data.drop(['sm_tp1_t',
+                                       'sm_tp2_t',
+                                       'sm_tp3_t',
+                                       'sm_tp4_t',
+                                       'sm_tp5_t',
+                                       'sm_tp6_t',
+                                       'date'], axis=1)
+    corr = drop_unnecessary_data.corr()
+    sns.heatmap(corr, cmap='viridis')
+    plt.savefig('image/9_상관계수_heatmap.png')
 
 
 def regression_analysis(data):
@@ -138,6 +152,7 @@ def regression_analysis(data):
                "i_fatality_rto+" \
                "i_release_rto+" \
                "i_critical_rto"
+
     y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
 
     result = sm.OLS(y, x).fit()
@@ -146,5 +161,6 @@ def regression_analysis(data):
 
 if __name__ == '__main__':
     data = descriptive_statistics()
-    regression_analysis(data)
-    check_vif(data)
+    # regression_analysis(data)
+    calc_correlation(data)
+    # check_vif(data)
