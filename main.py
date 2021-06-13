@@ -185,157 +185,27 @@ def calc_correlation(data):
 
 
 def regression_analysis(data):
-    y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석.png')
-    plt.close()
+    kind = ['tp1', 'tp2', 'tp3', 'tp4', 'tp5', 'tp6', 'tot']
+    for v in kind:
+        y, x = dmatrices("sm_" + v + "_t ~" + features, data=data, return_type="dataframe")
+        result = sm.OLS(y, x).fit()
+        plt.rc('figure', figsize=(9, 8))
+        plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
+                 fontproperties='monospace')  # approach improved by OP -> monospace!
+        plt.axis('off')
+        plt.tight_layout()
+        plt.savefig('./image/10_회귀분석' + "_" + v + '.png')
+        plt.close()
 
-    y1, x1 = dmatrices("sm_tot_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_다중공선성_제거.png')
-    plt.close()
-
-
-def regression_analysis_tp1(data):
-    y, x = dmatrices("sm_tp1_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_1종.png')
-    plt.close()
-
-    y1, x1 = dmatrices("sm_tp1_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_1종_다중공선성_제거.png')
-    plt.close()
-
-
-def regression_analysis_tp2(data):
-    y, x = dmatrices("sm_tp2_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_2종.png')
-    plt.close()
-
-    y1, x1 = dmatrices("sm_tp2_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_2종_다중공선성_제거.png')
-    plt.close()
-
-
-def regression_analysis_tp3(data):
-    y, x = dmatrices("sm_tp3_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_3종.png')
-    plt.close()
-
-    y1, x1 = dmatrices("sm_tp3_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_3종_다중공선성_제거.png')
-    plt.close()
-
-
-def regression_analysis_tp4(data):
-    y, x = dmatrices("sm_tp4_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_4종.png')
-    plt.close()
-
-    y1, x1 = dmatrices("sm_tp4_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_4종_다중공선성_제거.png')
-    plt.close()
-
-
-def regression_analysis_tp5(data):
-    y, x = dmatrices("sm_tp5_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_5종.png')
-    plt.close()
-
-    y1, x1 = dmatrices("sm_tp5_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_5종_다중공선성_제거.png')
-    plt.close()
-
-
-def regression_analysis_tp6(data):
-    y, x = dmatrices("sm_tp6_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_6종.png')
-    plt.close()
-
-    y1, x1 = dmatrices("sm_tp6_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_6종_다중공선성_제거.png')
-    plt.close()
+        y1, x1 = dmatrices("sm_" + v + "_t ~" + features_fixed, data=data, return_type="dataframe")
+        result1 = sm.OLS(y1, x1).fit()
+        plt.rc('figure', figsize=(9, 8))
+        plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
+                 fontproperties='monospace')  # approach improved by OP -> monospace!
+        plt.axis('off')
+        plt.tight_layout()
+        plt.savefig('./image/10_회귀분석' + "_" + v + '_다중공선성_제거.png')
+        plt.close()
 
 
 if __name__ == '__main__':
@@ -343,9 +213,3 @@ if __name__ == '__main__':
     calc_correlation(data)
     check_vif(data)
     regression_analysis(data)
-    regression_analysis_tp1(data)
-    regression_analysis_tp2(data)
-    regression_analysis_tp3(data)
-    regression_analysis_tp4(data)
-    regression_analysis_tp5(data)
-    regression_analysis_tp6(data)

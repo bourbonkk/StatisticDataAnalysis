@@ -35,8 +35,8 @@
 ![img.png](image/7_1_check_VIF.png)  
 ![img.png](image/7_2_check_VIF_fixed.png)  
 ![img.png](image/9_상관계수_heatmap.png)  
-![img.png](image/10_회귀분석.png)  
-![img.png](image/10_회귀분석_다중공선성_제거.png)  
+![img.png](image/10_회귀분석_tot.png)  
+![img.png](image/10_회귀분석_tot_다중공선성_제거.png)  
 
 ### 데이터 인덱스
 #### 1) traffic  
