@@ -147,7 +147,7 @@ def descriptive_statistics():
     return data
 
 
-# 다중공선성 확인을 위한 VIF
+# 다중공선성 확인을 위한 VIF(Variance Inflation Factors) 분산팽창요인
 def check_vif(data):
     # https://nonmeyet.tistory.com/entry/Python-Pvalue-VIF-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0-Linear-regression
     # 모든 독립변수
@@ -207,9 +207,51 @@ def regression_analysis(data):
         plt.savefig('./image/10_회귀분석' + "_" + v + '_다중공선성_제거.png')
         plt.close()
 
+# 시기별 효과 분석
+def regression_analysis_per_season():
+
+    data = pd.read_csv('./rawdata/5_totally_raw_data_fifth.csv')
+    data['i_critical'] = data['i_critical'].shift(1)
+    data['i_quarant'] = data['i_quarant'].shift(1)
+    data['i_under_test'] = data['i_under_test'].shift(1)
+    data['i_nw_confirm'] = data['i_nw_confirm'].shift(1)
+    data['i_nw_quarant'] = data['i_nw_quarant'].shift(1)
+    data['i_nw_release'] = data['i_nw_release'].shift(1)
+    data['i_nw_test'] = data['i_nw_test'].shift(1)
+    data['i_confirm_id_rto'] = data['i_confirm_id_rto'].shift(1)
+    data['i_quarant_id_rto'] = data['i_quarant_id_rto'].shift(1)
+    data['i_test_id_rto'] = data['i_test_id_rto'].shift(1)
+    data['i_test_cnfm_rto'] = data['i_test_cnfm_rto'].shift(1)
+    data['i_confirm_rto'] = data['i_confirm_rto'].shift(1)
+    data['i_fatality_rto'] = data['i_fatality_rto'].shift(1)
+    data['i_release_rto'] = data['i_release_rto'].shift(1)
+    data['i_critical_rto'] = data['i_critical_rto'].shift(1)
+    data['i_nw_death'] = data['i_nw_death'].shift(1)
+
+    y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
+    result = sm.OLS(y, x).fit()
+    plt.rc('figure', figsize=(9, 8))
+    plt.text(0.01, 0.05, str(result.summary2()), {'fontsize': 10},
+             fontproperties='monospace')  # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig('./image/10_회귀분석_fifth.png')
+    plt.close()
+
+    y1, x1 = dmatrices("sm_tot_t ~" + features_fixed, data=data, return_type="dataframe")
+    result1 = sm.OLS(y1, x1).fit()
+    plt.rc('figure', figsize=(9, 8))
+    plt.text(0.01, 0.05, str(result1.summary2()), {'fontsize': 10},
+             fontproperties='monospace')  # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig('./image/10_회귀분석_fifth_다중공선성_제거.png')
+    plt.close()
+
 
 if __name__ == '__main__':
-    data = descriptive_statistics()
-    calc_correlation(data)
-    check_vif(data)
-    regression_analysis(data)
+    # data = descriptive_statistics()
+    # calc_correlation(data)
+    # check_vif(data)
+    # regression_analysis(data)
+    regression_analysis_per_season()
