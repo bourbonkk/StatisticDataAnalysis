@@ -1,9 +1,5 @@
 # 기존 데이터  - 2020년 1월~6월까지 6개월간의 관측된 데이터를 활용
 
-# 2020 설 연휴 기간(1월 24일 부터 27일)
-# 2020 추석 기간 제외(9/30 ~ 10/04)
-# 2021 설 연휴 제외(2/11 ~ 14)
-
 # 환자현황 변수는 COVID-19 확진, 검사, 사망, 격 리 등 유사 정보를 파생해 만든 변수를 포함하고 있 으므로 독립변수 간
 # 강한 상관관계로 다중공선성 (multicollinearity) 문제가 발생할 수 있다. 다중공선 성 문제는 모형 신뢰도와 안정성을 해칠
 # 우려가 있어 분산팽창인자(variance inflation factor; VIF)를 이 용해 정보 중복이 가장 심한 변수부터 순차적으로 모형에서 제거해 최종 독립변수를 선정했다
@@ -26,50 +22,91 @@
 # COVID-19가 이동성에 미치는 영향요인 분석
 
 # 516일 데이터 수집
+# 2020 설 연휴 기간(1월 24일 부터 27일)
+# 2020 추석 기간 제외(9/30 ~ 10/04)
+# 2021 설 연휴 제외(2/11 ~ 14)
+# 명절 데이터 제거 시 504일
 
 import dataframe_image as dfi
 import pandas as pd
+import seaborn as sns
 import statsmodels.api as sm
 from matplotlib import pyplot as plt
 from patsy.highlevel import dmatrices
-from statsmodels.sandbox.regression.predstd import wls_prediction_std
 from statsmodels.stats.outliers_influence import variance_inflation_factor
-import seaborn as sns
+
+features = "i_critical+" \
+           "i_quarant+" \
+           "i_under_test+" \
+           "i_nw_confirm+" \
+           "i_nw_quarant+" \
+           "i_nw_release+" \
+           "i_nw_test+" \
+           "i_nw_death+" \
+           "i_confirm_id_rto+" \
+           "i_quarant_id_rto+" \
+           "i_test_id_rto+" \
+           "i_test_cnfm_rto+" \
+           "i_confirm_rto+" \
+           "i_fatality_rto+" \
+           "i_release_rto+" \
+           "i_critical_rto"
+
+# VIF가 지나치게 높은 변수 제거
+# i_confirm_rto
+# i_under_test
+# i_nw_confirm
+# i_nw_release
+# i_confirm_id_rto
+features_fixed = "i_critical+" \
+                 "i_quarant+" \
+                 "i_nw_confirm+" \
+                 "i_nw_quarant+" \
+                 "i_nw_test+" \
+                 "i_nw_death+" \
+                 "i_quarant_id_rto+" \
+                 "i_test_id_rto+" \
+                 "i_test_cnfm_rto+" \
+                 "i_fatality_rto+" \
+                 "i_release_rto+" \
+                 "i_critical_rto"
+
+
+hangul_mapper = {
+    "sm_tp1_t": "1종교통량(합계)",
+    "sm_tp2_t": "2종교통량(합계)",
+    "sm_tp3_t": "3종교통량(합계)",
+    "sm_tp4_t": "4종교통량(합계)",
+    "sm_tp5_t": "5종교통량(합계)",
+    "sm_tp6_t": "6종교통량(합계)",
+    "sm_tot_t": "교통량(합계)",
+    "confirmed": "누적확진자",
+    "death": "누적사망자",
+    "released": "누적격리해제",
+    "tested": "누적검사자",
+    "negative": "누적음성",
+    "critical": "누적위중증",
+    "i_quarant": "현재격리자수",
+    "i_under_test": "현재검사자수",
+    "i_nw_confirm": "신규확진자수",
+    "i_nw_quarant": "신규격리자수",
+    "i_nw_release": "신규격리해제자수",
+    "i_nw_test": "신규검사자수",
+    "i_nw_death": "신규사망자수",
+    "i_confirm_id_rto": "확진자증감률",
+    "i_quarant_id_rto": "현재격리자증감률",
+    "i_test_id_rto": "누적검사증감률",
+    "i_test_cnfm_rto": "검사자확진율",
+    "i_confirm_rto": "확진율",
+    "i_fatality_rto": "치명률",
+    "i_release_rto": "격리해제율",
+    "i_critical_rto": "위중증증감률",
+    "i_critical": "위중증환자수"
+}
 
 
 # 기술통계 데이터
 def descriptive_statistics():
-    hangul_mapper = {
-        "sm_tp1_t": "1종교통량(합계)",
-        "sm_tp2_t": "2종교통량(합계)",
-        "sm_tp3_t": "3종교통량(합계)",
-        "sm_tp4_t": "4종교통량(합계)",
-        "sm_tp5_t": "5종교통량(합계)",
-        "sm_tp6_t": "6종교통량(합계)",
-        "sm_tot_t": "교통량(합계)",
-        "confirmed": "누적확진자",
-        "death": "누적사망자",
-        "released": "누적격리해제",
-        "tested": "누적검사자",
-        "negative": "누적음성",
-        "critical": "누적위중증",
-        "i_quarant": "현재격리자수",
-        "i_under_test": "현재검사자수",
-        "i_nw_confirm": "신규확진자수",
-        "i_nw_quarant": "신규격리자수",
-        "i_nw_release": "신규격리해제자수",
-        "i_nw_test": "신규검사자수",
-        "i_nw_death": "신규사망자수",
-        "i_confirm_id_rto": "확진자증감률",
-        "i_quarant_id_rto": "현재격리자증감률",
-        "i_test_id_rto": "누적검사증감률",
-        "i_test_cnfm_rto": "검사자확진율",
-        "i_confirm_rto": "확진율",
-        "i_fatality_rto": "치명률",
-        "i_release_rto": "격리해제율",
-        "i_critical_rto": "위중증증감률",
-        "i_critical": "위중증환자수"
-    }
     data = pd.read_csv('./rawdata/totally_raw_data_delete_expression.csv')
     statistic_data = []
     col = ["한글 변수명", "영문 변수명", "N", "평균", "표준편차", "최솟값", "최댓값"]
@@ -89,40 +126,52 @@ def descriptive_statistics():
 
     # 주석 해제 시 이미지 생성
     dfi.export(statistic_df, 'image/8_statistic_view.png')
+
+    # 코로나 관련 독립변수 Lag 적용
+    data['i_critical'] = data['i_critical'].shift(1)
+    data['i_quarant'] = data['i_quarant'].shift(1)
+    data['i_under_test'] = data['i_under_test'].shift(1)
+    data['i_nw_confirm'] = data['i_nw_confirm'].shift(1)
+    data['i_nw_quarant'] = data['i_nw_quarant'].shift(1)
+    data['i_nw_release'] = data['i_nw_release'].shift(1)
+    data['i_nw_test'] = data['i_nw_test'].shift(1)
+    data['i_confirm_id_rto'] = data['i_confirm_id_rto'].shift(1)
+    data['i_quarant_id_rto'] = data['i_quarant_id_rto'].shift(1)
+    data['i_test_id_rto'] = data['i_test_id_rto'].shift(1)
+    data['i_test_cnfm_rto'] = data['i_test_cnfm_rto'].shift(1)
+    data['i_confirm_rto'] = data['i_confirm_rto'].shift(1)
+    data['i_fatality_rto'] = data['i_fatality_rto'].shift(1)
+    data['i_release_rto'] = data['i_release_rto'].shift(1)
+    data['i_critical_rto'] = data['i_critical_rto'].shift(1)
+    data['i_nw_death'] = data['i_nw_death'].shift(1)
+
     return data
 
 
-# 다중공산성 확인을 위한 VIF
+# 다중공선성 확인을 위한 VIF
 def check_vif(data):
     # https://nonmeyet.tistory.com/entry/Python-Pvalue-VIF-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0-Linear-regression
-    features = "i_critical+" \
-               "i_quarant+" \
-               "i_under_test+" \
-               "i_nw_confirm+" \
-               "i_nw_quarant+" \
-               "i_nw_release+" \
-               "i_nw_test+" \
-               "i_nw_death+" \
-               "i_confirm_id_rto+" \
-               "i_quarant_id_rto+" \
-               "i_test_id_rto+" \
-               "i_test_cnfm_rto+" \
-               "i_confirm_rto+" \
-               "i_fatality_rto+" \
-               "i_release_rto+" \
-               "i_critical_rto"
+    # 모든 독립변수
     y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
-
     # 보통 10이 넘으면 문제가 있다고 판단
     vif = pd.DataFrame()
     vif["VIF Factor"] = [variance_inflation_factor(x.values, i) for i in range(x.shape[1])]
     vif["features"] = x.columns
-    dfi.export(vif.round(1), 'image/7_check_VIF.png')
+    dfi.export(vif.round(1), 'image/7_1_check_VIF.png')
+
+    # 다중공선성 제거 변수 테스트
+    y, x = dmatrices("sm_tot_t ~" + features_fixed, data=data, return_type="dataframe")
+    # 보통 10이 넘으면 문제가 있다고 판단
+    vif = pd.DataFrame()
+    vif["VIF Factor"] = [variance_inflation_factor(x.values, i) for i in range(x.shape[1])]
+    vif["features"] = x.columns
+    dfi.export(vif.round(1), 'image/7_2_check_VIF_fixed.png')
 
 
-# 상관계수 히트맵
+# 피어슨 상관계수 히트맵
 def calc_correlation(data):
     # https://mindscale.kr/course/basic-stat-python/6/
+    # 차종별 교통량 제거, 날짜 제거
     drop_unnecessary_data = data.drop(['sm_tp1_t',
                                        'sm_tp2_t',
                                        'sm_tp3_t',
@@ -133,34 +182,33 @@ def calc_correlation(data):
     corr = drop_unnecessary_data.corr()
     sns.heatmap(corr, cmap='viridis')
     plt.savefig('image/9_상관계수_heatmap.png')
+    plt.close()
 
 
 def regression_analysis(data):
-    features = "i_critical+" \
-               "i_quarant+" \
-               "i_under_test+" \
-               "i_nw_confirm+" \
-               "i_nw_quarant+" \
-               "i_nw_release+" \
-               "i_nw_test+" \
-               "i_nw_death+" \
-               "i_confirm_id_rto+" \
-               "i_quarant_id_rto+" \
-               "i_test_id_rto+" \
-               "i_test_cnfm_rto+" \
-               "i_confirm_rto+" \
-               "i_fatality_rto+" \
-               "i_release_rto+" \
-               "i_critical_rto"
-
     y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
-
     result = sm.OLS(y, x).fit()
-    print(result.summary())
+    plt.rc('figure', figsize=(9, 8))
+    plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
+             fontproperties='monospace')  # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig('./image/10_회귀분석.png')
+    plt.close()
+
+    y1, x1 = dmatrices("sm_tot_t ~" + features_fixed, data=data, return_type="dataframe")
+    result1 = sm.OLS(y1, x1).fit()
+    plt.rc('figure', figsize=(9, 8))
+    plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
+             fontproperties='monospace')  # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig('./image/10_회귀분석_다중공선성_제거.png')
+    plt.close()
 
 
 if __name__ == '__main__':
     data = descriptive_statistics()
-    # regression_analysis(data)
-    calc_correlation(data)
+    # calc_correlation(data)
     # check_vif(data)
+    regression_analysis(data)
