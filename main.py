@@ -190,7 +190,7 @@ def regression_analysis(data):
         y, x = dmatrices("sm_" + v + "_t ~" + features, data=data, return_type="dataframe")
         result = sm.OLS(y, x).fit()
         plt.rc('figure', figsize=(9, 8))
-        plt.text(0.01, 0.05, str(result.summary()), {'fontsize': 10},
+        plt.text(0.01, 0.05, str(result.summary2()), {'fontsize': 10},
                  fontproperties='monospace')  # approach improved by OP -> monospace!
         plt.axis('off')
         plt.tight_layout()
@@ -200,7 +200,7 @@ def regression_analysis(data):
         y1, x1 = dmatrices("sm_" + v + "_t ~" + features_fixed, data=data, return_type="dataframe")
         result1 = sm.OLS(y1, x1).fit()
         plt.rc('figure', figsize=(9, 8))
-        plt.text(0.01, 0.05, str(result1.summary()), {'fontsize': 10},
+        plt.text(0.01, 0.05, str(result1.summary2()), {'fontsize': 10},
                  fontproperties='monospace')  # approach improved by OP -> monospace!
         plt.axis('off')
         plt.tight_layout()
