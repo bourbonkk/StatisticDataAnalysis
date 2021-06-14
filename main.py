@@ -59,7 +59,6 @@ features = "i_critical+" \
 # i_nw_release
 # i_confirm_id_rto
 features_fixed = "i_critical+" \
-                 "i_quarant+" \
                  "i_nw_confirm+" \
                  "i_nw_quarant+" \
                  "i_nw_test+" \
@@ -127,6 +126,7 @@ def descriptive_statistics():
     dfi.export(statistic_df, 'image/8_statistic_view.png')
 
     # 코로나 관련 독립변수 Lag 적용
+    # data['sm_tot_t'] = data['sm_tot_t'].shift(1)
     data['i_critical'] = data['i_critical'].shift(1)
     data['i_quarant'] = data['i_quarant'].shift(1)
     data['i_under_test'] = data['i_under_test'].shift(1)
@@ -207,51 +207,60 @@ def regression_analysis(data):
         plt.savefig('./image/10_회귀분석' + "_" + v + '_다중공선성_제거.png')
         plt.close()
 
+
 # 시기별 효과 분석
 def regression_analysis_per_season():
+    data_dic = {
+        "1기": "1_totally_raw_data_first.csv",
+        "2기": "2_totally_raw_data_second.csv",
+        "3기": "3_totally_raw_data_third.csv",
+        "4기": "4_totally_raw_data_fourth.csv",
+        "5기": "5_totally_raw_data_fifth.csv"
+    }
 
-    data = pd.read_csv('./rawdata/5_totally_raw_data_fifth.csv')
-    data['i_critical'] = data['i_critical'].shift(1)
-    data['i_quarant'] = data['i_quarant'].shift(1)
-    data['i_under_test'] = data['i_under_test'].shift(1)
-    data['i_nw_confirm'] = data['i_nw_confirm'].shift(1)
-    data['i_nw_quarant'] = data['i_nw_quarant'].shift(1)
-    data['i_nw_release'] = data['i_nw_release'].shift(1)
-    data['i_nw_test'] = data['i_nw_test'].shift(1)
-    data['i_confirm_id_rto'] = data['i_confirm_id_rto'].shift(1)
-    data['i_quarant_id_rto'] = data['i_quarant_id_rto'].shift(1)
-    data['i_test_id_rto'] = data['i_test_id_rto'].shift(1)
-    data['i_test_cnfm_rto'] = data['i_test_cnfm_rto'].shift(1)
-    data['i_confirm_rto'] = data['i_confirm_rto'].shift(1)
-    data['i_fatality_rto'] = data['i_fatality_rto'].shift(1)
-    data['i_release_rto'] = data['i_release_rto'].shift(1)
-    data['i_critical_rto'] = data['i_critical_rto'].shift(1)
-    data['i_nw_death'] = data['i_nw_death'].shift(1)
+    for key in data_dic:
+        data = pd.read_csv('./rawdata/' + data_dic[key])
+        data['i_critical'] = data['i_critical'].shift(1)
+        data['i_quarant'] = data['i_quarant'].shift(1)
+        data['i_under_test'] = data['i_under_test'].shift(1)
+        data['i_nw_confirm'] = data['i_nw_confirm'].shift(1)
+        data['i_nw_quarant'] = data['i_nw_quarant'].shift(1)
+        data['i_nw_release'] = data['i_nw_release'].shift(1)
+        data['i_nw_test'] = data['i_nw_test'].shift(1)
+        data['i_confirm_id_rto'] = data['i_confirm_id_rto'].shift(1)
+        data['i_quarant_id_rto'] = data['i_quarant_id_rto'].shift(1)
+        data['i_test_id_rto'] = data['i_test_id_rto'].shift(1)
+        data['i_test_cnfm_rto'] = data['i_test_cnfm_rto'].shift(1)
+        data['i_confirm_rto'] = data['i_confirm_rto'].shift(1)
+        data['i_fatality_rto'] = data['i_fatality_rto'].shift(1)
+        data['i_release_rto'] = data['i_release_rto'].shift(1)
+        data['i_critical_rto'] = data['i_critical_rto'].shift(1)
+        data['i_nw_death'] = data['i_nw_death'].shift(1)
 
-    y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
-    result = sm.OLS(y, x).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result.summary2()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_fifth.png')
-    plt.close()
+        y, x = dmatrices("sm_tot_t ~" + features, data=data, return_type="dataframe")
+        result = sm.OLS(y, x).fit()
+        plt.rc('figure', figsize=(9, 8))
+        plt.text(0.01, 0.05, str(result.summary2()), {'fontsize': 10},
+                 fontproperties='monospace')  # approach improved by OP -> monospace!
+        plt.axis('off')
+        plt.tight_layout()
+        plt.savefig('./image/10_회귀분석_'+key+'.png')
+        plt.close()
 
-    y1, x1 = dmatrices("sm_tot_t ~" + features_fixed, data=data, return_type="dataframe")
-    result1 = sm.OLS(y1, x1).fit()
-    plt.rc('figure', figsize=(9, 8))
-    plt.text(0.01, 0.05, str(result1.summary2()), {'fontsize': 10},
-             fontproperties='monospace')  # approach improved by OP -> monospace!
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig('./image/10_회귀분석_fifth_다중공선성_제거.png')
-    plt.close()
+        y1, x1 = dmatrices("sm_tot_t ~" + features_fixed, data=data, return_type="dataframe")
+        result1 = sm.OLS(y1, x1).fit()
+        plt.rc('figure', figsize=(9, 8))
+        plt.text(0.01, 0.05, str(result1.summary2()), {'fontsize': 10},
+                 fontproperties='monospace')  # approach improved by OP -> monospace!
+        plt.axis('off')
+        plt.tight_layout()
+        plt.savefig('./image/10_회귀분석_'+key+'_다중공선성_제거.png')
+        plt.close()
 
 
 if __name__ == '__main__':
-    # data = descriptive_statistics()
-    # calc_correlation(data)
-    # check_vif(data)
-    # regression_analysis(data)
+    data = descriptive_statistics()
+    calc_correlation(data)
+    check_vif(data)
+    regression_analysis(data)
     regression_analysis_per_season()
