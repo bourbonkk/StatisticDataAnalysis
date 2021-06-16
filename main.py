@@ -146,8 +146,8 @@ def descriptive_statistics():
 
     return data
 
-
-# 다중공선성 확인을 위한 VIF(Variance Inflation Factors) 분산팽창요인
+# 종속 변수 추출을 위한
+# 다중공선성 제거를 위한 VIF(Variance Inflation Factors) 분산팽창요인 확인
 def check_vif(data):
     # https://nonmeyet.tistory.com/entry/Python-Pvalue-VIF-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0-Linear-regression
     # 모든 독립변수
@@ -157,6 +157,7 @@ def check_vif(data):
     vif["VIF Factor"] = [variance_inflation_factor(x.values, i) for i in range(x.shape[1])]
     vif["features"] = x.columns
     dfi.export(vif.round(1), 'image/7_1_check_VIF.png')
+    vif.to_csv('image/7_1_check_VIF.scv')
 
     # 다중공선성 제거 변수 테스트
     y, x = dmatrices("sm_tot_t ~" + features_fixed, data=data, return_type="dataframe")
@@ -165,6 +166,7 @@ def check_vif(data):
     vif["VIF Factor"] = [variance_inflation_factor(x.values, i) for i in range(x.shape[1])]
     vif["features"] = x.columns
     dfi.export(vif.round(1), 'image/7_2_check_VIF_fixed.png')
+    vif.to_csv('image/7_2_check_VIF_fixed.scv')
 
 
 # 피어슨 상관계수 히트맵
@@ -191,7 +193,7 @@ def regression_analysis(data):
         result = sm.OLS(y, x).fit()
         plt.rc('figure', figsize=(9, 8))
         plt.text(0.01, 0.05, str(result.summary2()), {'fontsize': 10},
-                 fontproperties='monospace')  # approach improved by OP -> monospace!
+                 fontproperties='monospace')
         plt.axis('off')
         plt.tight_layout()
         plt.savefig('./image/10_회귀분석' + "_" + v + '.png')
@@ -201,7 +203,7 @@ def regression_analysis(data):
         result1 = sm.OLS(y1, x1).fit()
         plt.rc('figure', figsize=(9, 8))
         plt.text(0.01, 0.05, str(result1.summary2()), {'fontsize': 10},
-                 fontproperties='monospace')  # approach improved by OP -> monospace!
+                 fontproperties='monospace')
         plt.axis('off')
         plt.tight_layout()
         plt.savefig('./image/10_회귀분석' + "_" + v + '_다중공선성_제거.png')
