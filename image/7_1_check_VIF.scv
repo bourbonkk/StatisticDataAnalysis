@@ -1,0 +1,18 @@
+,VIF Factor,features
+0,18.300084867851055,Intercept
+1,13.015130164828529,i_critical
+2,30.48150123950271,i_quarant
+3,14.06091941673061,i_under_test
+4,inf,i_nw_confirm
+5,inf,i_nw_quarant
+6,inf,i_nw_release
+7,5.058267505306183,i_nw_test
+8,inf,i_nw_death
+9,16.53351087613396,i_confirm_id_rto
+10,14.746838916152091,i_quarant_id_rto
+11,1.295100404868765,i_test_id_rto
+12,2322.650034642918,i_test_cnfm_rto
+13,2306.59028642043,i_confirm_rto
+14,3.6714137524165604,i_fatality_rto
+15,5.50258581082958,i_release_rto
+16,1.2232196074754247,i_critical_rto
